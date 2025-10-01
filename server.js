@@ -1,7 +1,10 @@
 import express from "express";
 import path from "path";
+import livereload from "livereload"
+import connectLivereload from "connect-livereload"
 
 import { fileURLToPath } from 'url';
+import { routes } from "./routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,8 +24,20 @@ process.on("unhandledRejection", (reason, promise) => {
   console.error("⚠️ Unhandled Rejection at:", promise, "reason:", reason);
 });
 
-// Servir arquivos estáticos da pasta src/app inteira
-app.use(express.static(path.join(__dirname, '/src/app')))
+const directory = path.join(__dirname, '/src/app')
+
+// cria o liveReloadServer que juntamente com o connectLivereload atualizam a pagina quando tem alguma alteração no html ou css (tem um pouco de delay)
+const liveReloadServer = livereload.createServer();
+
+liveReloadServer.watch(directory)
+
+app.use(connectLivereload())
+
+// pegar arquivos estáticos da pasta src/app inteira
+app.use(express.static(directory))
+
+routes(app)
+
 
 app.use((req, res) => {
   res.status(404);
