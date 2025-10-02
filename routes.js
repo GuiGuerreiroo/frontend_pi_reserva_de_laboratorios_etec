@@ -10,4 +10,8 @@ export const routes = (app) => {
     app.get("/", (req, res) => {
         res.sendFile(path.join(directory, 'pages/index.html'))
     })
+
+    app.get("/agendamento", (req, res) => {
+        res.sendFile(path.join(directory, 'pages/agendamento.html'))
+    })
 }
